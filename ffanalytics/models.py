@@ -1,4 +1,4 @@
-from ff import db
+from ffanalytics import db
 from datetime import datetime as dt
 
 class users(db.Model):
