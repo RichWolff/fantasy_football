@@ -1,10 +1,10 @@
 from flask import render_template, url_for, flash, redirect
 from ffanalytics import app
-from forms import RegistrationForm, LoginForm
-from datetime import dt
+from ffanalytics.forms import RegistrationForm, LoginForm
+#from datetime import dt
 # A very simple Flask Hello World app for you to get started with...
 ## IMPORT DB MODEL
-from models import users,user_notes,user_note_changes
+from ffanalytics.models import users,user_notes,user_note_changes
 
 
 # Pages
