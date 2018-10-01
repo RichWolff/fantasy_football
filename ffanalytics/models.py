@@ -1,7 +1,13 @@
-from ffanalytics import db
+from ffanalytics import db, login_manager
 from datetime import datetime as dt
+from flask_login import UserMixin
 
-class users(db.Model):
+
+@login_manager.user_loader
+def load_user(user_id):
+    return users.query.get(int(user_id))
+
+class users(db.Model, UserMixin):
     __tablename__ = "users"
 
     #table columns
@@ -15,7 +21,7 @@ class users(db.Model):
     user_notes = db.relationship('user_notes',backref='user',lazy=True)
 
     def __repr__(self):
-        return "users(email: '{}', first_name: '{}', last_name: '{}', image_file: '{}')".format(self.email,self.first_name,self.last_name,self.image_file)
+        return "users(email: '{}', first_name: '{}', last_name: '{}', join_date: '{}', image_file: '{}')".format(self.email,self.first_name,self.last_name,self.join_date,self.image_file)
 
 class user_notes(db.Model):
     __tablename__ = "user_notes"
