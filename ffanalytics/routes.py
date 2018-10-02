@@ -1,7 +1,11 @@
 from flask import render_template, url_for, flash, redirect, request, abort
-from ffanalytics import app, db, bcrypt
-from ffanalytics.forms import RegistrationForm, LoginForm, UpdateAccountForm, UserNoteForm
+from ffanalytics import app, db, bcrypt, mail
+from ffanalytics.forms import (
+            RegistrationForm, LoginForm, UpdateAccountForm,
+            UserNoteForm, RequestResetForm, ResetPasswordForm
+)
 from flask_login import login_user, current_user, logout_user, login_required
+from flask_mail import Message
 import datetime as dt
 import secrets
 import os
@@ -23,6 +27,7 @@ def home():
 @login_required
 @app.route('/user/home', methods=['GET', 'POST'])
 def user_home():
+    page = request.args.get('page',1,type=int)
     user_note_form = UserNoteForm()
     if user_note_form.validate_on_submit():
 
@@ -48,15 +53,15 @@ def user_home():
             flash('Note not saved, something wen\'t wrong','failure')
 
 
-    updates = get_user_activity()
+    updates = get_user_activity(page_number = page)
     return render_template('user_page.html',
                             title='User Home',
                             user_note_form = user_note_form,
                             user_notes = updates,
                             legend = 'Add a Note')
 
-def get_user_activity():
-    return user_notes.query.filter_by(user_id=current_user.id,note_active=1).order_by(user_notes.note_date.desc())
+def get_user_activity(page_number=1,per_page=5):
+    return user_notes.query.filter_by(user_id=current_user.id,note_active=1).order_by(user_notes.note_date.desc()).paginate(page=page_number,per_page=per_page)
 
 def track_note_changes(note_id,modify_type,modify_date,new_content,old_content=''):
     #update post tracking
@@ -246,8 +251,57 @@ def account():
 
     return render_template('account.html', title='Account', image_file=image_file, form=form)
 
+def send_reset_email(user):
+    token = user.get_reset_token()
+    msg = Message('Fantasy Football Analytics Password Reset Request',
+                    sender='ffanalytics4@gmail.com',
+                    recipients=[user.email])
+    msg.body = f'''To reset your password, visit the following link:
+{url_for('reset_token', token=token, _external=True)}
+If you did not make this request then simply ignore this email and no changes will be made.'''.format(token)
+    mail.send(msg)
+@app.route('/reset_password', methods=['GET', 'POST'])
+def reset_request():
+    if current_user.is_authenticated:
+        return redirect(url_for('user_home'))
+
+    form = RequestResetForm()
+
+    if form.validate_on_submit():
+        user = users.query.filter_by(email=form.email.data).first()
+        send_reset_email(user)
+        flash('An email has been sent with instructions to reset your password.','info')
+        return redirect(url_for('login'))
+
+    return render_template('reset_request.html', title='Reset Password',form=form)
 
 
+
+@app.route('/reset_password/<token>', methods=['GET', 'POST'])
+def reset_token(token):
+    if current_user.is_authenticated:
+        return redirect(url_for('user_home'))
+
+    user = users.verify_reset_token(token)
+
+    if user is None:
+        flash('That is an invalid or expired link.','warning')
+        return redirect(url_for('reset_request'))
+
+
+    form = ResetPasswordForm()
+    if form.validate_on_submit():
+
+        # Generate new users object and save to database
+        hashed_pw = bcrypt.generate_password_hash(form.password.data).decode('utf-8')
+        user.password = hashed_pw
+        db.session.commit()
+
+        # Return
+        flash('Your password has been updated! Please login using your new password.', 'success')
+        return redirect(url_for('login'))
+
+    return render_template('reset_password.html', title='Reset Password',form=form)
 
 
 
