@@ -32,10 +32,12 @@ class user_notes(db.Model):
     note_date = db.Column(db.DateTime, nullable=False, default=dt.utcnow)
     note_last_changed = db.Column(db.DateTime, nullable=False, default=dt.utcnow)
     content = db.Column(db.Text, nullable=False)
+    note_active = db.Column(db.Integer, nullable=False, default=1)
     note_changes = db.relationship('user_note_changes', backref='note', lazy=True)
 
+
     def __repr__(self):
-        return "user_note(user_id: '{}', note_date: '{}', note_last_changed: '{}')".format(self.user_id,self.note_date,self.note_last_changed)
+        return "user_note(user_id: '{}', note_date: '{}', note_last_changed: '{}', note_active: {})".format(self.user_id,self.note_date,self.note_last_changed,self.note_active)
 
 
 class user_note_changes(db.Model):
@@ -45,7 +47,8 @@ class user_note_changes(db.Model):
     note_id = db.Column(db.Integer, db.ForeignKey('user_notes.id'),nullable=False)
     modify_type = db.Column(db.String(25),unique=False,nullable=True)
     modify_date = db.Column(db.DateTime, nullable=False, default=dt.utcnow)
-    content = db.Column(db.Text, nullable=False)
+    old_content = db.Column(db.Text, nullable=False)
+    new_content = db.Column(db.Text, nullable=False)
 
     def __repr__(self):
         return "user_note_changes(note_id: {}, modify_type: '{}', modify_date: '{}')".format(self.note_id,self.modify_type,self.modify_date)

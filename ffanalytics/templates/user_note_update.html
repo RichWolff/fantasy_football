@@ -1,0 +1,16 @@
+{% extends "layout.html" %}
+{% block content %}
+    {% if current_user.is_authenticated %}
+                <article class="media content-section">
+                    <img class="rounded-circle article-img" src="{{ url_for('static', filename='profile_pics/'+ user_note.user.image_file) }}"></img>
+                    <div class="media-body">
+                        <div class="article-metadata">
+                            <a class "mr-2" href="#">{{ user_note.user.first_name }}</a>
+                            <small class="text-muted">{{ user_note.note_date.strftime('%Y-%m-%d %H:%M %p') }}</small>
+                        </div>
+                        <p class="article-content">{{ user_note.content }}</p>
+                    </div>
+                </article>
+    {% endif %}
+
+{% endblock %}

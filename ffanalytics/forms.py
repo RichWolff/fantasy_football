@@ -1,6 +1,6 @@
 from flask_wtf import FlaskForm
 from flask_wtf.file import FileField, FileAllowed
-from wtforms import StringField, PasswordField, SubmitField, BooleanField
+from wtforms import StringField, PasswordField, SubmitField, BooleanField, TextAreaField
 from wtforms.validators import DataRequired, Length, Email, EqualTo, ValidationError
 from ffanalytics.models import users
 from flask_login import current_user
@@ -37,3 +37,6 @@ class UpdateAccountForm(FlaskForm):
             if user:
                 raise ValidationError('Email already exists. Please login with your existing account.')
 
+class UserNoteForm(FlaskForm):
+    content = TextAreaField('Add Some Thoughts', validators = [DataRequired(),Length(min=5,max=255)])
+    submit = SubmitField('Save Note')

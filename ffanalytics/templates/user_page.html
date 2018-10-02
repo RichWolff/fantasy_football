@@ -1,0 +1,85 @@
+{% extends "layout.html" %}
+{% block content %}
+    <div class="content-section">
+        <div class="media">
+        <h1 class="account-heading">{{ current_user.first_name }} {{ current_user.last_name }}</h1>
+        <div class="media-body">
+            <p class="text-secondary">{{ current_user.email }}</p>
+        </div>
+    </div>
+
+    {% if current_user.is_authenticated %}
+        <form method="POST", action="", enctype="multipart/form-data">
+            {{ user_note_form.hidden_tag() }}
+                <fieldset class="form-group">
+                    <div class="form-group">
+                        <p class="mb-1"> {{ legend }} </p>
+                        {% if  user_note_form.content.errors %}
+                            {{  user_note_form.content(class="form-control form-control-lg is-invalid") }}
+                            <div class="invalid-feedback">
+                                {% for error in user_note_form.content.errors %}
+                                    <span>{{ error }}</span>
+                                {% endfor %}
+                            </div>
+                        {% else %}
+
+                            <div class="mb-2">{{  user_note_form.content(class="form-control form-control-lg") }}</div>
+                        {% endif %}
+
+
+                {{ user_note_form.submit(class="btn btn-outline-info") }}
+                {% if user_note_form.content.data %}
+                <button type="button" class="m-1 btn btn-danger btn-tiny" data-toggle="modal" data-target="#deleteModal">Delete Note</button>
+                {% endif %}
+            </div>
+             </fieldset>
+        </form>
+    {% endif %}
+
+            <h3 class="text-secondary mb-2">Your Notes</h3>
+            {% for user_note in user_notes %}
+                <article class="media content-section">
+                    <img class="rounded-circle article-img" src="{{ url_for('static', filename='profile_pics/'+ user_note.user.image_file) }}"></img>
+                    <div class="media-body">
+                        <div class="article-metadata">
+                            <a class="mr-2" href="#">{{ user_note.user.first_name }}</a>
+                            <small class="text-muted">{{ user_note.note_date.strftime('%Y-%m-%d %H:%M %p') }}
+                            {% if user_note.user == current_user %}
+                            <a class="m-1 btn btn-secondary btn-sm" href="{{ url_for('user_note_update', user_note_id=user_note.id) }}">Edit</a></small>
+                            {% endif %}
+                        </div>
+                        <p class="article-content">{{ user_note.content }}</p>
+
+                    </div>
+                </article>
+            {% endfor %}
+</div>
+
+
+<!-- Delete Post Modal -->
+<div class="modal fade" id="deleteModal" tabindex="-1" role="dialog" aria-labelledby="deleteModalLabel" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="deleteModalLabel">Delete Note?</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        Are you sure you want to delete this post?
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+        <form action="{% if note_to_update %}{{ url_for('delete_note', user_note_id=note_to_update.id) }}{% endif %}" method="POST">
+            <input class="btn btn-danger" type="submit" value="Delete Post">
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+
+</script>
+{% endblock content %}
