@@ -1,31 +1,21 @@
-from flask import render_template, url_for, flash, redirect, request, abort
-from ffanalytics import app, db, bcrypt, mail
-from ffanalytics.forms import (
-            RegistrationForm, LoginForm, UpdateAccountForm,
-            UserNoteForm, RequestResetForm, ResetPasswordForm
-)
-from flask_login import login_user, current_user, logout_user, login_required
-from flask_mail import Message
+from flask import render_template, url_for, flash, redirect, request, abort, Blueprint
+from ffanalytics import db
+from flask import current_app
+from ffanalytics.user.forms import UpdateAccountForm, UserNoteForm
+from flask_login import current_user, login_required
 import datetime as dt
 import secrets
 import os
 from PIL import Image
 
+user_pages = Blueprint('user_pages', __name__)
 
 ## IMPORT DB MODEL
 from ffanalytics.models import users,user_notes,user_note_changes
 
 
-# Pages
-@app.route('/')
-def home():
-    if current_user.is_authenticated:
-        return redirect(url_for('user_home'))
-    return render_template('home.html',title='Home')
-
-
 @login_required
-@app.route('/user/home', methods=['GET', 'POST'])
+@user_pages.route('/user/home', methods=['GET', 'POST'])
 def user_home():
     page = request.args.get('page',1,type=int)
     user_note_form = UserNoteForm()
@@ -45,7 +35,7 @@ def user_home():
 
             db.session.commit()
             flash('Note has been updated.','success')
-            return redirect(url_for('user_home'))
+            return redirect(url_for('user_pages.user_home'))
 
         else:
             db.session.rollback()
@@ -80,8 +70,7 @@ def track_note_changes(note_id,modify_type,modify_date,new_content,old_content='
     else:
         return 0
 
-@login_required
-@app.route('/user/home/edit_note_<int:user_note_id>', methods=['GET', 'POST'])
+@user_pages.route('/user/home/edit_note_<int:user_note_id>', methods=['GET', 'POST'])
 def user_note_update(user_note_id):
     user_note = user_notes.query.get_or_404(user_note_id)
 
@@ -117,7 +106,7 @@ def user_note_update(user_note_id):
             if pull_updates_into_form == 0:
                 db.session.commit()
                 flash('Note has been updated.','success')
-                return redirect(url_for('user_home'))
+                return redirect(url_for('user_pages.user_home'))
             else:
                 db.session.rollback()
                 db.session.remove()
@@ -136,7 +125,7 @@ def user_note_update(user_note_id):
                             user_note_form=user_note_form,
                             legend = 'Update Note')
 
-@app.route('/user/home/delete_note_<int:user_note_id>', methods=['POST'])
+@user_pages.route('/user/home/delete_note_<int:user_note_id>', methods=['POST'])
 @login_required
 def delete_note(user_note_id):
     user_note = user_notes.query.get_or_404(user_note_id)
@@ -154,59 +143,11 @@ def delete_note(user_note_id):
         user_note.note_active = 0
         db.session.commit()
         flash('Note has been deleted.','success')
-        return redirect(url_for('user_home'))
+        return redirect(url_for('user_pages.user_home'))
     else:
         db.session.rollback()
         db.session.remove()
         flash('Note not saved, something wen\'t wrong','failure')
-
-@app.route('/register', methods=['GET', 'POST'])
-def register():
-    if current_user.is_authenticated:
-        return redirect(url_for('user_home'))
-
-    form = RegistrationForm()
-    if form.validate_on_submit():
-
-        # Generate new users object and save to database
-        hashed_pw = bcrypt.generate_password_hash(form.password.data).decode('utf-8')
-        new_user = users(
-            email=form.email.data,
-            first_name=form.first_name.data,
-            last_name=form.last_name.data,
-            password=hashed_pw)
-        db.session.add(new_user)
-        db.session.commit()
-
-        # Return
-        flash('Account created for {}! Please login using the credentials supplied.'.format(form.email.data), 'success')
-        return redirect(url_for('login'))
-    return render_template('register.html',title='Register',form=form)
-
-
-@app.route('/login', methods=['GET', 'POST'])
-def login():
-    if current_user.is_authenticated:
-            return redirect(url_for('user_home'))
-    form = LoginForm()
-    if form.validate_on_submit():
-
-        #Check login
-        user = users.query.filter_by(email=form.email.data).first()
-        if user and bcrypt.check_password_hash(user.password, form.password.data):
-            login_user(user,remember=form.remember.data)
-            next_page = request.args.get('next')
-            return redirect(next_page) if next_page else redirect(url_for('home'))
-        else:
-            flash('Login unsuccessful. Please check your email and password.', 'danger')
-
-    return render_template('login.html',title='Login',form=form)
-
-
-@app.route('/logout')
-def logout():
-    logout_user()
-    return redirect(url_for('home'))
 
 
 def save_picture(form_picture):
@@ -214,7 +155,7 @@ def save_picture(form_picture):
     random_hex = secrets.token_hex(8)
     _, f_ext = os.path.splitext(form_picture.filename)
     picture_fn = str(random_hex)+ str(f_ext)
-    picture_path = os.path.join(app.root_path, 'static/profile_pics', picture_fn)
+    picture_path = os.path.join(current_app.root_path, 'static/profile_pics', picture_fn)
 
     output_size = (125,125)
     img = Image.open(form_picture)
@@ -224,7 +165,7 @@ def save_picture(form_picture):
     return picture_fn
 
 
-@app.route('/account', methods=['GET', 'POST'])
+@user_pages.route('/account', methods=['GET', 'POST'])
 @login_required
 def account():
     form = UpdateAccountForm()
@@ -240,7 +181,7 @@ def account():
             current_user.email = form.email.data
         db.session.commit()
         flash('Your account has been updated.', 'success')
-        return redirect(url_for('account'))
+        return redirect(url_for('user_pages.account'))
 
     elif request.method == 'GET':
         form.email.data = current_user.email
@@ -250,58 +191,3 @@ def account():
     image_file = url_for('static', filename='profile_pics/' + current_user.image_file)
 
     return render_template('account.html', title='Account', image_file=image_file, form=form)
-
-def send_reset_email(user):
-    token = user.get_reset_token()
-    msg = Message('Fantasy Football Analytics Password Reset Request',
-                    sender='ffanalytics4@gmail.com',
-                    recipients=[user.email])
-    msg.body = f'''To reset your password, visit the following link:
-{url_for('reset_token', token=token, _external=True)}
-If you did not make this request then simply ignore this email and no changes will be made.'''.format(token)
-    mail.send(msg)
-@app.route('/reset_password', methods=['GET', 'POST'])
-def reset_request():
-    if current_user.is_authenticated:
-        return redirect(url_for('user_home'))
-
-    form = RequestResetForm()
-
-    if form.validate_on_submit():
-        user = users.query.filter_by(email=form.email.data).first()
-        send_reset_email(user)
-        flash('An email has been sent with instructions to reset your password.','info')
-        return redirect(url_for('login'))
-
-    return render_template('reset_request.html', title='Reset Password',form=form)
-
-
-
-@app.route('/reset_password/<token>', methods=['GET', 'POST'])
-def reset_token(token):
-    if current_user.is_authenticated:
-        return redirect(url_for('user_home'))
-
-    user = users.verify_reset_token(token)
-
-    if user is None:
-        flash('That is an invalid or expired link.','warning')
-        return redirect(url_for('reset_request'))
-
-
-    form = ResetPasswordForm()
-    if form.validate_on_submit():
-
-        # Generate new users object and save to database
-        hashed_pw = bcrypt.generate_password_hash(form.password.data).decode('utf-8')
-        user.password = hashed_pw
-        db.session.commit()
-
-        # Return
-        flash('Your password has been updated! Please login using your new password.', 'success')
-        return redirect(url_for('login'))
-
-    return render_template('reset_password.html', title='Reset Password',form=form)
-
-
-

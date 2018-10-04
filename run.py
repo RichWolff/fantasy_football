@@ -1,5 +1,5 @@
-from ffanalytics import app
+from ffanalytics import create_app
 
-
-if __name_- == '__main__':
+app = create_app
+if __name__- == '__main__':
     app.run(debug=True)
