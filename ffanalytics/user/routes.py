@@ -11,7 +11,7 @@ from PIL import Image
 user_pages = Blueprint('user_pages', __name__)
 
 ## IMPORT DB MODEL
-from ffanalytics.models import users,user_notes,user_note_changes
+from ffanalytics.models import users,user_notes,user_note_changes, stadium_details, team_details, player_details, player_details,user_player_views
 
 
 @login_required
@@ -44,11 +44,14 @@ def user_home():
 
 
     updates = get_user_activity(page_number = page)
+    stad = player_details.query.all()
+    #player_views = user_player_views.query.group_by(user_player_views.player_details.player_id).limit(5)
+    player_views = db.session.query(player_details).join(user_player_views).order_by(user_player_views.id.desc()).distinct().limit(6)
     return render_template('user_page.html',
                             title='User Home',
                             user_note_form = user_note_form,
                             user_notes = updates,
-                            legend = 'Add a Note')
+                            legend = 'Add a Note',stad=stad,player_views=player_views)
 
 def get_user_activity(page_number=1,per_page=5):
     return user_notes.query.filter_by(user_id=current_user.id,note_active=1).order_by(user_notes.note_date.desc()).paginate(page=page_number,per_page=per_page)

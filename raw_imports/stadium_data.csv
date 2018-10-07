@@ -1,0 +1,46 @@
+stadium_id,name,city,state,country,latitude,longitude,type,capacity,surface
+1,New Era Field,Orchard Park,NY,USA,42.773758,-78.786837,Outdoor,73079.0,Artificial
+2,Hard Rock Stadium,Miami Gardens,FL,USA,25.95774,-80.238781,Outdoor,76100.0,Grass
+3,MetLife Stadium,East Rutherford,NJ,USA,40.813611,-74.074444,Outdoor,82500.0,Artificial
+4,Gillette Stadium,Foxborough,MA,USA,42.090866,-71.264244,Outdoor,68756.0,Grass
+5,Paul Brown Stadium,Cincinnati,OH,USA,39.095309,-84.516003,Outdoor,65535.0,Artificial
+6,FirstEnergy Stadium,Cleveland,OH,USA,41.505885,-81.699458,Outdoor,71516.0,Artificial
+7,M&T Bank Stadium,Baltimore,MD,USA,39.277985,-76.622788,Outdoor,71008.0,Artificial
+8,Heinz Field,Pittsburgh,PA,USA,40.446751,-80.015707,Outdoor,65050.0,Grass
+9,Lucas Oil Stadium,Indianapolis,IN,USA,39.760056,-86.163806,RetractableDome,67000.0,Artificial
+10,TIAA Bank Field,Jacksonville,FL,USA,30.323813,-81.637199,Outdoor,67246.0,Artificial
+11,NRG Stadium,Houston,TX,USA,29.684722,-95.410707,RetractableDome,71054.0,Artificial
+12,Nissan Stadium,Nashville,TN,USA,36.166441,-86.771253,Outdoor,6914.0,Grass
+13,Broncos Stadium at Mile High,Denver,CO,USA,39.743936,-105.020097,Outdoor,76125.0,Grass
+14,Qualcomm Stadium,San Diego,CA,USA,32.783188,-117.119439,Outdoor,70561.0,Grass
+15,Arrowhead Stadium,Kansas City,MO,USA,39.049002,-94.483864,Outdoor,76416.0,Grass
+16,Oakland Coliseum,Oakland,CA,USA,37.751613,-122.200509,Outdoor,53200.0,Grass
+17,AT&T Stadium,Arlington,TX,USA,32.747778,-97.092778,RetractableDome,80000.0,Artificial
+18,Lincoln Financial Field,Philadelphia,PA,USA,39.900771,-75.167469,Outdoor,68532.0,Grass
+19,FedEx Field,Landover,MD,USA,38.907652,-76.864479,Outdoor,85000.0,Grass
+20,Soldier Field,Chicago,IL,USA,41.86232,-87.616699,Outdoor,61500.0,Grass
+21,Ford Field,Detroit,MI,USA,42.340021,-83.045777,Dome,65000.0,Artificial
+22,Lambeau Field,Green Bay,WI,USA,44.501389,-88.061944,Outdoor,80750.0,Grass
+23,Mall of America Field,Minneapolis,MN,US,44.976,-93.225,Dome,64111.0,Dome
+24,Raymond James Stadium,Tampa Bay,FL,USA,27.975967,-82.50335,Outdoor,65890.0,Grass
+25,Georgia Dome,Atlanta,GA,USA,33.757614,-84.400972,Dome,74228.0,Dome
+26,Bank of America Stadium,Charlotte,NC,USA,35.225808,-80.852861,Outdoor,73778.0,Grass
+27,Mercedes-Benz Superdome,New Orleans,LA,USA,29.950931,-90.081364,Dome,73208.0,Grass
+28,Candlestick Park,San Francisco,CA,US,37.404108,-121.970274,Outdoor,70207.0,Grass
+29,U of Phoenix Stadium,Glendale,AZ,USA,33.527558,-112.263036,RetractableDome,63400.0,Artificial
+30,Edward Jones Dome,St. Louis,MO,USA,38.632975,-90.188547,Dome,66000.0,Dome
+31,CenturyLink Field,Seattle,WA,USA,47.595153,-122.331625,Outdoor,67000.0,Artificial
+33,Wembley Stadium,London,,UK,51.555833,-0.279722,Retractable_dome,86000.0,Grass
+34,Rogers Centre,Toronto,,CA,43.64159,-79.390028,Retractable_dome,86000.0,Dome
+35,Fawcett Stadium,Canton,OH,USA,40.819822,-81.398177,Outdoor,22375.0,Artificial
+36,TCF Bank Stadium,Minneapolis,MN,USA,44.976,-93.225,Outdoor,50805.0,Artificial
+37,Levi's Stadium,Santa Clara,CA,USA,37.404108,-121.970274,Outdoor,68500.0,Grass
+38,Los Angeles Memorial Coliseum,Los Angeles,CA,USA,34.014167,-118.287778,Outdoor,93607.0,Grass
+39,Camping World Stadium,Orlando,FL,USA,25.958056,-80.238889,Outdoor,65000.0,Artificial
+40,Twickenham Stadium,London,,UK,51.455936,-0.341516,Outdoor,82000.0,Grass
+41,Estadio Azteca,Mexico City,,MEX,19.302861,-99.150528,Outdoor,87000.0,Grass
+42,U.S. Bank Stadium,Minneapolis,MN,USA,44.974288,-93.329728,Dome,66655.0,Artificial
+43,StubHub Center,Carson,CA,USA,33.858663,-118.256666,Outdoor,27000.0,Grass
+45,Mercedes-Benz Stadium,Atlanta,GA,USA,33.755,-84.401,RetractableDome,71000.0,Artificial
+46,Tom Benson Hall of Fame Stadium,Canton,OH,USA,40.81988,-81.39801,,,
+47,Tottenham Stadium,London,,UK,,,,,

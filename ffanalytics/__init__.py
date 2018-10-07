@@ -20,8 +20,9 @@ def create_app(config=Config):
     app = Flask(__name__)
 
     app.config.from_object(Config)
-
+    db.app = app
     db.init_app(app)
+
     bcrypt.init_app(app)
     login_manager.init_app(app)
     mail.init_app(app)
@@ -30,8 +31,14 @@ def create_app(config=Config):
     from ffanalytics.user.routes import user_pages
     from ffanalytics.user_authentication.routes import user_authentication
     from ffanalytics.main.routes import main
+    from ffanalytics.player_data.routes import player_data
+    from ffanalytics.errors.handlers import errors
 
     app.register_blueprint(user_authentication)
     app.register_blueprint(user_pages)
     app.register_blueprint(main)
+    app.register_blueprint(errors)
+    app.register_blueprint(player_data)
     return app
+
+app = create_app(Config)

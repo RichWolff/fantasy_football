@@ -1,0 +1,27 @@
+{% extends "player_data_layout.html" %}
+{% block content %}
+<div class="content-section">
+    <div>
+        <div class="media">
+            <img class="rounded-circle mr-3" src="{{ player.photo_url }}"/>
+            <div class="media-body col-med-6">
+                <h2 class="account-heading">{{ player.name }} - {{ player.position }}</h2>
+                <p class="text-secondary">{{ player.team_details.city }} {{ player.team_details.name }} - Bye Week: {{ player.bye_week }}</p>
+            </div>
+            <div class="col-med-2">
+                <p>
+                    Age: {{ player.age }}</br>
+                    Experience: {% if player.experience == 0 %} Rookie {% else %} {{ player.experience }}{% endif %}</br>
+                    Height: {{ player.height_feet|int }}' {{ player.height_inches|int }}"</br>
+                    Weight: {{ player.weight|int }} </br>
+                    College: {{ player.college }} </br>
+                </p>
+
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+{% endblock content %}

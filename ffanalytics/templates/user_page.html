@@ -2,10 +2,8 @@
 {% block content %}
     <div class="content-section">
         <div class="media">
+            <img class="rounded-circle mr-3 mb-3" src="{{ url_for('static', filename='/profile_pics/'+ current_user.image_file) }}"/>
         <h1 class="account-heading">{{ current_user.first_name }} {{ current_user.last_name }}</h1>
-        <div class="media-body">
-            <p class="text-secondary">{{ current_user.email }}</p>
-        </div>
     </div>
 
     {% if current_user.is_authenticated %}
